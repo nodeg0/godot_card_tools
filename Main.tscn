@@ -1,0 +1,69 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Main.gd" type="Script" id=1]
+[ext_resource path="res://Library/Library.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Decks/PlayerDeck.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Scenes/Table.tscn" type="PackedScene" id=4]
+[ext_resource path="res://PlayTarget.gd" type="Script" id=5]
+[ext_resource path="res://icon.png" type="Texture" id=6]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 89.6895, 93.9819 )
+
+[sub_resource type="ParticlesMaterial" id=2]
+flag_disable_z = true
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 500.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+scale = 6.6
+hue_variation = -0.33
+hue_variation_random = 1.0
+
+[node name="Main" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="Library" parent="." instance=ExtResource( 2 )]
+
+[node name="Deck" parent="." instance=ExtResource( 3 )]
+
+[node name="Table" parent="." instance=ExtResource( 4 )]
+
+[node name="LeftPoint" parent="Table" index="1"]
+position = Vector2( 300, 400 )
+
+[node name="RightPoint" parent="Table" index="2"]
+position = Vector2( 810, 400 )
+
+[node name="PlayTarget" type="Area2D" parent="."]
+script = ExtResource( 5 )
+
+[node name="Sprite" type="Sprite" parent="PlayTarget"]
+position = Vector2( 504.294, 149.9 )
+scale = Vector2( 2.87953, 2.90845 )
+texture = ExtResource( 6 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayTarget"]
+position = Vector2( 503.368, 149.9 )
+shape = SubResource( 1 )
+
+[node name="Particles2D" type="Particles2D" parent="PlayTarget"]
+show_behind_parent = true
+position = Vector2( 503.368, 151.751 )
+emitting = false
+amount = 50
+lifetime = 0.5
+one_shot = true
+explosiveness = 0.7
+process_material = SubResource( 2 )
+
+[node name="Timer" type="Timer" parent="PlayTarget"]
+wait_time = 0.56
+one_shot = true
+[connection signal="deal_hand" from="." to="Table" method="_on_Main_deal_hand"]
+[connection signal="area_entered" from="PlayTarget" to="." method="_on_PlayTarget_area_entered"]
+[connection signal="area_exited" from="PlayTarget" to="." method="_on_PlayTarget_area_exited"]
+[connection signal="timeout" from="PlayTarget/Timer" to="PlayTarget" method="_on_Timer_timeout"]
+
+[editable path="Table"]

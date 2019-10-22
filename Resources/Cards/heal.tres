@@ -1,0 +1,14 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://Resources/Cardtypes.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+card_name = "Heal"
+rarity = 1
+cost = null
+type = null
+power = null
+defense = null
+flavour_text = "Ahhh!  That's the good stuff."
+health = 3

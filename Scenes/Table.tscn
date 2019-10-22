@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Table.gd" type="Script" id=1]
+
+[node name="Table" type="Node2D"]
+script = ExtResource( 1 )
+card_tilt = -35.0
+
+[node name="PlayerHand" type="Node2D" parent="."]
+
+[node name="LeftPoint" type="Position2D" parent="."]
+position = Vector2( 50, 550 )
+
+[node name="RightPoint" type="Position2D" parent="."]
+position = Vector2( 980, 550 )

@@ -1,0 +1,77 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Card_base/Card.gd" type="Script" id=1]
+[ext_resource path="res://Assets/Front_simple-export.png" type="Texture" id=2]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 46, 66 )
+
+[node name="Card" type="Area2D" groups=[
+"cards",
+]]
+position = Vector2( 1, 0 )
+script = ExtResource( 1 )
+focus_move_on_y = 80
+drag_and_drop = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 46, 68 )
+shape = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+centered = false
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="name" type="Label" parent="."]
+margin_left = 10.0
+margin_right = 76.0
+margin_bottom = 14.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "TEST"
+align = 1
+
+[node name="Cost" type="Label" parent="."]
+margin_left = 2.77975
+margin_top = 18.0684
+margin_right = 21.7798
+margin_bottom = 39.0684
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "12"
+
+[node name="power" type="Label" parent="."]
+margin_left = 68.5824
+margin_top = 18.249
+margin_right = 108.582
+margin_bottom = 32.249
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "12"
+
+[node name="defense" type="Label" parent="."]
+margin_left = 0.71698
+margin_top = 119.734
+margin_right = 40.717
+margin_bottom = 133.734
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "12"
+
+[node name="flavour" type="Label" parent="."]
+margin_left = 0.924545
+margin_top = 48.6227
+margin_right = 89.9245
+margin_bottom = 101.623
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "blah blah blah"
+autowrap = true
+clip_text = true
+
+[node name="EnterDelayTimer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+[connection signal="input_event" from="." to="." method="_on_Card_input_event"]
+[connection signal="mouse_entered" from="." to="." method="_on_Card_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_Card_mouse_exited"]
+[connection signal="timeout" from="EnterDelayTimer" to="." method="_on_EnterDelayTimer_timeout"]
