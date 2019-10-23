@@ -14,4 +14,6 @@ Deck will eventually allow loading and saving of decks. Currently the only funct
 
 I believe the only critical function that is missing for most functionality is the draw_cards function for the table scene.  I'm sure that you can figure something out if you're brave enough to play with this before it's finished.
 
+commenting in the code is very limited, and I still have some refactoring and cleaning up to do.
+
 Feel free to let me know if you use this for anything.  I'd love to check it out.
