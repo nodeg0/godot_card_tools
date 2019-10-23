@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://Library/Library.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Decks/PlayerDeck.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Scenes/PlayerDeck.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Scenes/Table.tscn" type="PackedScene" id=4]
 [ext_resource path="res://PlayTarget.gd" type="Script" id=5]
 [ext_resource path="res://icon.png" type="Texture" id=6]
