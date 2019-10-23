@@ -1,11 +1,12 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
-[ext_resource path="res://Library/Library.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Scenes/Library.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Scenes/PlayerDeck.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Scenes/Table.tscn" type="PackedScene" id=4]
 [ext_resource path="res://PlayTarget.gd" type="Script" id=5]
 [ext_resource path="res://icon.png" type="Texture" id=6]
+[ext_resource path="res://Assets/Kenney Rocket.ttf" type="DynamicFontData" id=7]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 89.6895, 93.9819 )
@@ -15,11 +16,21 @@ flag_disable_z = true
 spread = 180.0
 gravity = Vector3( 0, 0, 0 )
 initial_velocity = 500.0
+angular_velocity = 1.0
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
 scale = 6.6
 hue_variation = -0.33
 hue_variation_random = 1.0
+
+[sub_resource type="DynamicFont" id=3]
+font_data = ExtResource( 7 )
+
+[sub_resource type="DynamicFont" id=4]
+font_data = ExtResource( 7 )
+
+[sub_resource type="DynamicFont" id=5]
+font_data = ExtResource( 7 )
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 1 )
@@ -61,7 +72,34 @@ process_material = SubResource( 2 )
 [node name="Timer" type="Timer" parent="PlayTarget"]
 wait_time = 0.56
 one_shot = true
+
+[node name="CardsInDeck" type="Label" parent="."]
+margin_left = 142.325
+margin_top = 32.5803
+margin_right = 238.325
+margin_bottom = 52.5803
+custom_fonts/font = SubResource( 3 )
+text = "dtsadf"
+
+[node name="CardsInDiscard" type="Label" parent="."]
+margin_left = 142.325
+margin_top = 89.1672
+margin_right = 270.325
+margin_bottom = 109.167
+custom_fonts/font = SubResource( 4 )
+text = "adsfasdf"
+
+[node name="CardsInHand" type="Label" parent="."]
+margin_left = 29.1508
+margin_top = 564.154
+margin_right = 85.1508
+margin_bottom = 583.154
+custom_fonts/font = SubResource( 5 )
+text = "qwerawerf"
 [connection signal="deal_hand" from="." to="Table" method="_on_Main_deal_hand"]
+[connection signal="update_deck_count" from="Table" to="." method="_on_Table_update_deck_count"]
+[connection signal="update_discard_count" from="Table" to="." method="_on_Table_update_discard_count"]
+[connection signal="update_hand_count" from="Table" to="." method="_on_Table_update_hand_count"]
 [connection signal="area_entered" from="PlayTarget" to="." method="_on_PlayTarget_area_entered"]
 [connection signal="area_exited" from="PlayTarget" to="." method="_on_PlayTarget_area_exited"]
 [connection signal="timeout" from="PlayTarget/Timer" to="PlayTarget" method="_on_Timer_timeout"]

@@ -3,9 +3,8 @@
 [ext_resource path="res://scripts/Card.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Front_simple-export.png" type="Texture" id=2]
 
-
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 46, 66 )
+extents = Vector2( 46, 69 )
 
 [node name="Card" type="Area2D" groups=[
 "cards",
@@ -69,10 +68,13 @@ text = "blah blah blah"
 autowrap = true
 clip_text = true
 
-[node name="EnterDelayTimer" type="Timer" parent="."]
-wait_time = 0.1
+[node name="Tween" type="Tween" parent="."]
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.3
 one_shot = true
+autostart = true
 [connection signal="input_event" from="." to="." method="_on_Card_input_event"]
 [connection signal="mouse_entered" from="." to="." method="_on_Card_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_Card_mouse_exited"]
-[connection signal="timeout" from="EnterDelayTimer" to="." method="_on_EnterDelayTimer_timeout"]
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

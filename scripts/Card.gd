@@ -20,17 +20,24 @@ var hand_location #modified on creation to store default location on Table node
 var tilt : float 
 var dragMouse :  = false
 var focusCard :  = false
-var card_in_play = false
+var card_in_play : = false
+
 
 func _ready():
 	pass
 
-func _process(delta):
+func _process(delta): 
 	if drag_and_drop:
 		if(dragMouse):
 			set_position(get_viewport().get_mouse_position()+ Vector2(-40, -80))
 
 
+
+func move_card(dest):
+		$Tween.interpolate_property(self, "position" , position, dest, 0.3, Tween.TRANS_BACK, Tween.EASE_OUT)
+		$Tween.start()
+
+	
 func card_initialize(path, type):
 	card = load(path + type)
 	card_name = card.card_name
@@ -49,15 +56,23 @@ func card_initialize(path, type):
 	hand_location = position
 
 func make_focus():
+	var position_shift = position
+	position_shift.y -=80
 	emit_signal("in_focus", z_index)
 	focusCard = true
 	if position == hand_location:
-		position.y -= focus_move_on_y
+		move_card(position_shift)
+#		position.y -= focus_move_on_y
+		$CollisionShape2D.scale.y = 1.5
+		$CollisionShape2D.position.y += 80
 
 func off_focus(z):
 	if z != z_index && !card_in_play:
 		focusCard = false
-		position = hand_location
+		move_card(hand_location)
+		if $CollisionShape2D.scale.y == 1.5:
+			$CollisionShape2D.scale.y = 1.0
+			$CollisionShape2D.position.y -= 80
 	else:
 		focusCard = true
 
@@ -100,7 +115,7 @@ func _on_Card_mouse_exited():
 #	position = hand_location
 	pass
 
-
-
-func _on_EnterDelayTimer_timeout():
-	pass
+func _on_Timer_timeout():
+	move_card(Vector2(hand_location.x, hand_location.y + 40))
+	yield($Tween, "tween_completed")
+	move_card(Vector2(hand_location.x, hand_location.y - 60))
