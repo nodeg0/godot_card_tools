@@ -13,3 +13,6 @@ position = Vector2( 50, 550 )
 
 [node name="RightPoint" type="Position2D" parent="."]
 position = Vector2( 980, 550 )
+
+[node name="Deck" type="Position2D" parent="."]
+position = Vector2( 125.154, 157.803 )

@@ -41,3 +41,4 @@ func make_all_card_array(path = "res://Resources/Cards/", rarity = 0):
         print("An error occurred when trying to access the path.")
 	print(allcards)
 #	return allcards
+

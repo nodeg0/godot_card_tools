@@ -2,6 +2,8 @@ extends Resource
 
 class_name Cardtypes
 
+#Custom resource to create cards.  Variable can be changed to whatever you want to use.
+
 export var card_name : String = "Card"
 
 enum RARITY {all, common, uncommon, rare, legendary}

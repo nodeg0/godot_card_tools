@@ -5,13 +5,16 @@ var playerhand = [] #array full of NAMES of card files in hand Note: does not co
 var playerhandpaths = [] #array full of card paths for reference
 var playerdiscard = [] #array full of discarded cards
 export (float) var card_tilt # measurement in degrees of the tilt of the furthest card for a fan effect
+onready var deck_origin = get_node("../Deck")
+onready var deck_on = deck_origin.deck_on_screen
 
 signal update_deck_count
 signal update_discard_count
 signal update_hand_count
 
 func _ready():
-	pass
+	$Deck.connect("turn_off_deck", self, "_on_Deck_turn_off_deck")
+	$Deck.connect("turn_on_deck", self, "_on_Deck_turn_on_deck")
 
 func make_player_deck(deck):
 	playerdeck = deck
@@ -37,14 +40,32 @@ func place_hand():
 	var cardID
 	
 	if cardcount > 0:
-		var gap = space/cardcount	
-		for card in range(playerhandpaths.size()):
-			cardID = get_node(playerhandpaths[card])
-			cardID.z_index = card + 1
-			cardID.position.x = (unused_space/2) + $LeftPoint.position.x + card * ideal_cardwidth
-			cardID.position.y = $LeftPoint.position.y
-			cardID.hand_location = cardID.position
+		if hand_width > space:
+			ideal_cardwidth = space / cardcount
+			for card in range(playerhandpaths.size()):
+				cardID = get_node(playerhandpaths[card])
+				cardID.z_index = card + 1
+				cardID.base_z = cardID.z_index
+				cardID.position.x = $LeftPoint.position.x + card * ideal_cardwidth
+				cardID.position.y = $LeftPoint.position.y
+				cardID.hand_location = cardID.position	
+				if deck_on and !cardID.dealt:
+					cardID.deck_location = $Deck.position
+					cardID.position = cardID.deck_location
+		else:
+			for card in range(playerhandpaths.size()):
+				cardID = get_node(playerhandpaths[card])
+				cardID.z_index = card + 1
+				cardID.base_z = cardID.z_index
+				cardID.position.x = (unused_space/2) + $LeftPoint.position.x + card * ideal_cardwidth
+				cardID.position.y = $LeftPoint.position.y
+				cardID.hand_location = cardID.position
+				if deck_on and !cardID.dealt:
+					cardID.deck_location = $Deck.position
+					cardID.position = cardID.deck_location
 		tilt_cards()
+		print(playerhand)
+		print(playerhandpaths)
 # Deals hand. player arg is for later use in multiple player games. num is cards dealt. Cards are created and deck is reduced
 func reset_hand_after_play(card_played = "nocard"):
 	var cardcount = playerhandpaths.size()
@@ -59,7 +80,8 @@ func reset_hand_after_play(card_played = "nocard"):
 			if card_played != null || card_played != "nocard":
 				if card == card_played:
 					cardID = get_node(card)
-					var cardnum = cardID.z_index -1
+					var cardnum = cardID.base_z -1
+
 					playerhandpaths.remove(cardnum)
 					playerdiscard.append(playerhand[cardnum])
 					playerhand.remove(cardnum)
@@ -67,9 +89,15 @@ func reset_hand_after_play(card_played = "nocard"):
 			for card in range(playerhandpaths.size()):
 				cardID = get_node(playerhandpaths[card])
 				cardID.z_index = card + 1
+				cardID.base_z = cardID.z_index
 				cardID.position.x = (unused_space/2) + $LeftPoint.position.x + card * ideal_cardwidth
 				cardID.position.y = $LeftPoint.position.y
 				cardID.hand_location = cardID.position
+#				if deck_on:
+#					cardID.deck_location = $Deck.position
+#					cardID.position = cardID.deck_location
+	print(playerhand)
+	print(playerhandpaths)
 	place_hand()
 	emit_signal("update_deck_count", playerdeck)
 	emit_signal("update_hand_count", playerhand)
@@ -119,7 +147,7 @@ func draw_cards(num):
 			playerdeck.remove(0)
 		else:
 			print("out of cards")
-		reset_hand_after_play()
+		reset_hand_after_play("draw") #"draw" added so as not to trigger "nocard" result.
 		
 
 func _on_Main_deal_hand(player, num):
@@ -153,9 +181,16 @@ func _new_card_focus(cardZ):
 #It will be updated to be more universal in the future.
 func _play_effect(card_played):
 	print("play_effect")
+	print(card_played)
 	reset_hand_after_play(card_played)
 	get_node("../PlayTarget").particles()
-	draw_cards(1) # for testing purposes. Remove and connect to your game via signal perhaps
+
 
 
 	
+
+func _on_Deck_turn_off_deck():
+	deck_on = false
+	
+func _on_Deck_turn_on_deck():
+	deck_on = true

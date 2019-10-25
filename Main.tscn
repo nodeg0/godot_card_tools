@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://Scenes/Library.tscn" type="PackedScene" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://PlayTarget.gd" type="Script" id=5]
 [ext_resource path="res://icon.png" type="Texture" id=6]
 [ext_resource path="res://Assets/Kenney Rocket.ttf" type="DynamicFontData" id=7]
+[ext_resource path="res://Assets/Back_simple.png" type="Texture" id=8]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 89.6895, 93.9819 )
@@ -32,12 +33,16 @@ font_data = ExtResource( 7 )
 [sub_resource type="DynamicFont" id=5]
 font_data = ExtResource( 7 )
 
+[sub_resource type="DynamicFont" id=6]
+font_data = ExtResource( 7 )
+
 [node name="Main" type="Node2D"]
 script = ExtResource( 1 )
 
 [node name="Library" parent="." instance=ExtResource( 2 )]
 
 [node name="Deck" parent="." instance=ExtResource( 3 )]
+deck_on_screen = true
 
 [node name="Table" parent="." instance=ExtResource( 4 )]
 
@@ -46,6 +51,9 @@ position = Vector2( 300, 400 )
 
 [node name="RightPoint" parent="Table" index="2"]
 position = Vector2( 810, 400 )
+
+[node name="Deck" parent="Table" index="3"]
+position = Vector2( 82.9824, 217.659 )
 
 [node name="PlayTarget" type="Area2D" parent="."]
 script = ExtResource( 5 )
@@ -96,6 +104,44 @@ margin_right = 85.1508
 margin_bottom = 583.154
 custom_fonts/font = SubResource( 5 )
 text = "qwerawerf"
+
+[node name="Button" type="Button" parent="."]
+margin_left = 843.0
+margin_top = 32.0
+margin_right = 934.0
+margin_bottom = 52.0
+custom_fonts/font = SubResource( 6 )
+text = "DRAW CARD"
+
+[node name="DeckButton" type="TextureButton" parent="."]
+visible = false
+margin_left = 85.0
+margin_top = 214.0
+margin_right = 114.0
+margin_bottom = 249.0
+rect_scale = Vector2( 0.5, 0.5 )
+texture_normal = ExtResource( 8 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+margin_left = 827.523
+margin_top = 83.2433
+margin_right = 1009.52
+margin_bottom = 569.243
+
+[node name="DeckOnScreen" type="CheckButton" parent="VBoxContainer"]
+margin_right = 182.0
+margin_bottom = 40.0
+text = "Deck On Screen"
+
+[node name="CheckButton2" type="CheckButton" parent="VBoxContainer"]
+margin_top = 44.0
+margin_right = 182.0
+margin_bottom = 84.0
+
+[node name="CheckButton3" type="CheckButton" parent="VBoxContainer"]
+margin_top = 88.0
+margin_right = 182.0
+margin_bottom = 128.0
 [connection signal="deal_hand" from="." to="Table" method="_on_Main_deal_hand"]
 [connection signal="update_deck_count" from="Table" to="." method="_on_Table_update_deck_count"]
 [connection signal="update_discard_count" from="Table" to="." method="_on_Table_update_discard_count"]
@@ -103,5 +149,8 @@ text = "qwerawerf"
 [connection signal="area_entered" from="PlayTarget" to="." method="_on_PlayTarget_area_entered"]
 [connection signal="area_exited" from="PlayTarget" to="." method="_on_PlayTarget_area_exited"]
 [connection signal="timeout" from="PlayTarget/Timer" to="PlayTarget" method="_on_Timer_timeout"]
+[connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]
+[connection signal="pressed" from="DeckButton" to="." method="_on_DeckButton_pressed"]
+[connection signal="toggled" from="VBoxContainer/DeckOnScreen" to="." method="_on_DeckOnScreen_toggled"]
 
 [editable path="Table"]
