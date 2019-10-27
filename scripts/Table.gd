@@ -4,11 +4,18 @@ var playerdeck = [] #array full of NAMES of card files Note: does not contain pa
 var playerhand = [] #array full of NAMES of card files in hand Note: does not contain path
 var playerhandpaths = [] #array full of card paths for reference
 var playerdiscard = [] #array full of discarded cards
-export (float) var card_tilt # measurement in degrees of the tilt of the furthest card for a fan effect
+export (int) var ideal_cardwidth = 80 #Slightly less than the card width so as to have overlap. Could be increased if you want a gap
+export (bool) var use_curve = true
+
 onready var deck_origin = get_node("../Deck")
 onready var deck_on = deck_origin.deck_on_screen
+onready var path_length = $Path2D.curve.get_baked_length()
+onready var spawner_follow = $Path2D/PathFollow2D
+onready var spawner_position = $Path2D/PathFollow2D/DeckSpawner.get_global_position()
+onready var spawner_rotation = $Path2D/PathFollow2D/DeckSpawner.get_global_transform().get_rotation()
 
-signal update_deck_count
+#Connect to UI as necessary
+signal update_deck_count 
 signal update_discard_count
 signal update_hand_count
 
@@ -30,44 +37,8 @@ func make_card(cardname):
 	main.add_child(card)
 	playerhandpaths.append(card.get_path())
 #
-func place_hand():
-	var cardcount = playerhandpaths.size()
-	var space = $RightPoint.position.x - $LeftPoint.position.x
+func set_hand(card_played = "nocard"):
 
-	var ideal_cardwidth = 80 #Slightly less than the card width so as to have overlap. Could be increased if you want a gap
-	var hand_width = ideal_cardwidth * cardcount
-	var unused_space = space - hand_width
-	var cardID
-	
-	if cardcount > 0:
-		if hand_width > space:
-			ideal_cardwidth = space / cardcount
-			for card in range(playerhandpaths.size()):
-				cardID = get_node(playerhandpaths[card])
-				cardID.z_index = card + 1
-				cardID.base_z = cardID.z_index
-				cardID.position.x = $LeftPoint.position.x + card * ideal_cardwidth
-				cardID.position.y = $LeftPoint.position.y
-				cardID.hand_location = cardID.position	
-				if deck_on and !cardID.dealt:
-					cardID.deck_location = $Deck.position
-					cardID.position = cardID.deck_location
-		else:
-			for card in range(playerhandpaths.size()):
-				cardID = get_node(playerhandpaths[card])
-				cardID.z_index = card + 1
-				cardID.base_z = cardID.z_index
-				cardID.position.x = (unused_space/2) + $LeftPoint.position.x + card * ideal_cardwidth
-				cardID.position.y = $LeftPoint.position.y
-				cardID.hand_location = cardID.position
-				if deck_on and !cardID.dealt:
-					cardID.deck_location = $Deck.position
-					cardID.position = cardID.deck_location
-		tilt_cards()
-		print(playerhand)
-		print(playerhandpaths)
-# Deals hand. player arg is for later use in multiple player games. num is cards dealt. Cards are created and deck is reduced
-func reset_hand_after_play(card_played = "nocard"):
 	var cardcount = playerhandpaths.size()
 	var space = $RightPoint.position.x - $LeftPoint.position.x
 	var cardID
@@ -76,6 +47,7 @@ func reset_hand_after_play(card_played = "nocard"):
 	var unused_space = space - hand_width
 	
 	if cardcount > 0:
+
 		for card in playerhandpaths:
 			if card_played != null || card_played != "nocard":
 				if card == card_played:
@@ -86,45 +58,47 @@ func reset_hand_after_play(card_played = "nocard"):
 					playerdiscard.append(playerhand[cardnum])
 					playerhand.remove(cardnum)
 					cardID.queue_free()
+			spawner_follow.offset = 0
 			for card in range(playerhandpaths.size()):
-				cardID = get_node(playerhandpaths[card])
-				cardID.z_index = card + 1
-				cardID.base_z = cardID.z_index
-				cardID.position.x = (unused_space/2) + $LeftPoint.position.x + card * ideal_cardwidth
-				cardID.position.y = $LeftPoint.position.y
-				cardID.hand_location = cardID.position
-#				if deck_on:
-#					cardID.deck_location = $Deck.position
-#					cardID.position = cardID.deck_location
-	print(playerhand)
-	print(playerhandpaths)
-	place_hand()
+				if !use_curve:
+					pass
+#					if hand_width > space:
+#						ideal_cardwidth = space / cardcount
+#						for card in range(playerhandpaths.size()):
+#							cardID = get_node(playerhandpaths[card])
+#							cardID.z_index = card + 1
+#							cardID.base_z = cardID.z_index
+#							cardID.position.x = $LeftPoint.position.x + card * ideal_cardwidth
+#							cardID.position.y = $LeftPoint.position.y
+#							cardID.hand_location = cardID.position	
+#							if deck_on and !cardID.dealt:
+#								cardID.deck_location = $Deck.position
+#								cardID.position = cardID.deck_location
+#					else:
+#						for card in range(playerhandpaths.size()):
+#							cardID = get_node(playerhandpaths[card])
+#							cardID.z_index = card + 1
+#							cardID.base_z = cardID.z_index
+#							cardID.position.x = (unused_space/2) + $LeftPoint.position.x + card * ideal_cardwidth
+#							cardID.position.y = $LeftPoint.position.y
+#							cardID.hand_location = cardID.position
+#							if deck_on and !cardID.dealt:
+#								cardID.deck_location = $Deck.position
+#								cardID.position = cardID.deck_location
+				else: 
+
+					cardID = get_node(playerhandpaths[card])
+					cardID.z_index = card + 1
+					cardID.base_z = cardID.z_index
+					cardID.position = spawner_position
+					cardID.rotation = spawner_rotation
+					cardID.hand_location = cardID.position
+					spawner_follow.offset += ideal_cardwidth
+					cardID.hand_location = cardID.position
+
 	emit_signal("update_deck_count", playerdeck)
 	emit_signal("update_hand_count", playerhand)
-	emit_signal("update_discard_count", playerdiscard)
-
-
-func tilt_cards():
-#	var y
-#	var max_tilt = card_tilt
-#	var halfway = ceil(playerhandpaths.size()/2)
-#	var tilt_card = max_tilt / (halfway - 2)
-#	var tiltarray = []
-#
-#	for x in range (playerhandpaths.size()):
-#		var card = get_node(playerhandpaths[x])
-#		if playerhandpaths.size() > 1:
-#				if x == halfway || x == halfway and playerhandpaths.size() % 2 ==0:
-#					card.rotation_degrees = 0
-#				elif x < halfway:
-#					y = max_tilt + ((x-1) * tilt_card)
-#					tiltarray.append(y)
-#					card.rotation_degrees = y
-#				elif x >halfway and playerhandpaths.size() % 2 != 0 || x > halfway + 1 and playerhandpaths.size() % 2 == 0:
-#					y = tiltarray.back() * -1
-#					tiltarray.pop_back()
-#					card.rotation_degrees = y
-	pass
+	emit_signal("update_discard_count", playerdiscard)	
 
 
 func shuffle_discard():
@@ -134,9 +108,9 @@ func shuffle_discard():
 			playerdeck.push_back(playerdiscard[card])
 	playerdiscard = []
 
-func draw_cards(num):
+func draw_cards(num, player = "player"):
 	for x in num:
-		if playerdeck.size() >0:
+		if playerdeck.size() > 0:
 			playerhand.append(playerdeck[0])
 			make_card(playerdeck[0])
 			playerdeck.remove(0)
@@ -147,33 +121,8 @@ func draw_cards(num):
 			playerdeck.remove(0)
 		else:
 			print("out of cards")
-		reset_hand_after_play("draw") #"draw" added so as not to trigger "nocard" result.
-		
+		set_hand("draw") #"draw" added so as not to trigger "nocard" result.
 
-func _on_Main_deal_hand(player, num):
-#	print("here is the deck before")
-#	print(playerdeck)
-	for card in range(num):
-		if playerdeck.size() > 0:
-			playerhand.append(playerdeck[0])
-			print("here is hand:")
-			print(playerhand)
-			make_card(playerdeck[0])
-			playerdeck.remove(0)
-			print("here is deck:")
-			print(playerdeck)
-		elif playerdeck.size() == 0:
-			shuffle_discard()
-			if playerdeck.size() == 0:
-				break
-#	print("here is the deck after")
-#	print(playerdeck)
-	emit_signal("update_deck_count", playerdeck)
-	emit_signal("update_hand_count", playerhand)
-	emit_signal("update_discard_count", playerdiscard)
-	place_hand()
-
-	
 func _new_card_focus(cardZ):
 	get_tree().call_group("cards", "off_focus", cardZ)
 
@@ -182,12 +131,8 @@ func _new_card_focus(cardZ):
 func _play_effect(card_played):
 	print("play_effect")
 	print(card_played)
-	reset_hand_after_play(card_played)
+	set_hand(card_played)
 	get_node("../PlayTarget").particles()
-
-
-
-	
 
 func _on_Deck_turn_off_deck():
 	print("deck off")

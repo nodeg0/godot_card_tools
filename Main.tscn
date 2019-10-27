@@ -17,7 +17,6 @@ flag_disable_z = true
 spread = 180.0
 gravity = Vector3( 0, 0, 0 )
 initial_velocity = 500.0
-angular_velocity = 1.0
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
 scale = 6.6
@@ -47,10 +46,10 @@ deck_on_screen = true
 [node name="Table" parent="." instance=ExtResource( 4 )]
 
 [node name="LeftPoint" parent="Table" index="1"]
-position = Vector2( 233.193, 405.274 )
+position = Vector2( 533.019, 396.227 )
 
 [node name="RightPoint" parent="Table" index="2"]
-position = Vector2( 954.163, 400 )
+position = Vector2( 868.868, 396.123 )
 
 [node name="Deck" parent="Table" index="3"]
 position = Vector2( 82.9824, 217.659 )
@@ -123,10 +122,10 @@ rect_scale = Vector2( 0.5, 0.5 )
 texture_normal = ExtResource( 8 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-margin_left = 827.523
-margin_top = 83.2433
-margin_right = 1009.52
-margin_bottom = 569.243
+margin_left = 830.0
+margin_top = 82.0
+margin_right = 1012.0
+margin_bottom = 315.0
 
 [node name="DeckOnScreen" type="CheckButton" parent="VBoxContainer"]
 margin_right = 182.0
@@ -142,7 +141,7 @@ margin_bottom = 84.0
 margin_top = 88.0
 margin_right = 182.0
 margin_bottom = 128.0
-[connection signal="deal_hand" from="." to="Table" method="_on_Main_deal_hand"]
+[connection signal="deal_hand" from="." to="Table" method="draw_cards"]
 [connection signal="update_deck_count" from="Table" to="." method="_on_Table_update_deck_count"]
 [connection signal="update_discard_count" from="Table" to="." method="_on_Table_update_discard_count"]
 [connection signal="update_hand_count" from="Table" to="." method="_on_Table_update_hand_count"]

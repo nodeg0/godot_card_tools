@@ -1,10 +1,15 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://scripts/Table.gd" type="Script" id=1]
+[ext_resource path="res://icon.png" type="Texture" id=2]
+
+[sub_resource type="Curve2D" id=1]
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, 366.738, 407.829, 0, 0, 0, 0, 830.161, 401.677 )
+}
 
 [node name="Table" type="Node2D"]
 script = ExtResource( 1 )
-card_tilt = -35.0
 
 [node name="PlayerHand" type="Node2D" parent="."]
 
@@ -16,3 +21,15 @@ position = Vector2( 980, 550 )
 
 [node name="Deck" type="Position2D" parent="."]
 position = Vector2( 125.154, 157.803 )
+
+[node name="Path2D" type="Path2D" parent="."]
+curve = SubResource( 1 )
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Path2D"]
+position = Vector2( 366.738, 407.829 )
+rotation = -0.0132689
+
+[node name="DeckSpawner" type="Position2D" parent="Path2D/PathFollow2D"]
+
+[node name="Sprite" type="Sprite" parent="Path2D/PathFollow2D/DeckSpawner"]
+texture = ExtResource( 2 )

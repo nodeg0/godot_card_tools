@@ -21,7 +21,7 @@ func get_player_deck():
 	table.make_player_deck(playerdeck)
 
 func deal_hand(player, numb):
-	emit_signal("deal_hand", player, numb)
+	emit_signal("deal_hand", numb, player)
 
 func _on_PlayTarget_area_entered(area):
 	area.set_play_area()
