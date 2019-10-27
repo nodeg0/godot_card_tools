@@ -47,10 +47,10 @@ deck_on_screen = true
 [node name="Table" parent="." instance=ExtResource( 4 )]
 
 [node name="LeftPoint" parent="Table" index="1"]
-position = Vector2( 300, 400 )
+position = Vector2( 233.193, 405.274 )
 
 [node name="RightPoint" parent="Table" index="2"]
-position = Vector2( 810, 400 )
+position = Vector2( 954.163, 400 )
 
 [node name="Deck" parent="Table" index="3"]
 position = Vector2( 82.9824, 217.659 )

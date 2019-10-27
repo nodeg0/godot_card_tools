@@ -13,8 +13,8 @@ signal update_discard_count
 signal update_hand_count
 
 func _ready():
-	$Deck.connect("turn_off_deck", self, "_on_Deck_turn_off_deck")
-	$Deck.connect("turn_on_deck", self, "_on_Deck_turn_on_deck")
+	deck_origin.connect("turn_off_deck", self, "_on_Deck_turn_off_deck")
+	deck_origin.connect("turn_on_deck", self, "_on_Deck_turn_on_deck")
 
 func make_player_deck(deck):
 	playerdeck = deck
@@ -190,7 +190,9 @@ func _play_effect(card_played):
 	
 
 func _on_Deck_turn_off_deck():
+	print("deck off")
 	deck_on = false
 	
 func _on_Deck_turn_on_deck():
 	deck_on = true
+	print("deck on")
