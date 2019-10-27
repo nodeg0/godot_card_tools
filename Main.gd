@@ -13,7 +13,7 @@ signal deal_hand
 func _ready():
 	randomize()
 	get_player_deck()
-	deal_hand("player", 3)
+	deal_hand("player", 5)
 
 func get_player_deck():
 	playerdeck = $Deck.default_deck()

@@ -16,6 +16,7 @@ var flavour_text : String
 var health : int
 
 var hand_location #modified on creation to store default location on Table node
+var hand_rotation
 var base_z
 var tilt : float 
 var dragMouse :  = false
@@ -75,6 +76,7 @@ func make_focus():
 	emit_signal("in_focus", z_index)
 	focusCard = true
 	if position == hand_location:
+		rotation = 0.0
 		move_card(position_shift)
 #		position.y -= focus_move_on_y
 		$CollisionShape2D.scale.y = 1.5
@@ -84,6 +86,7 @@ func make_focus():
 func off_focus(z):
 	if z != z_index && !card_in_play:
 		focusCard = false
+		rotation = hand_rotation
 		move_card(hand_location)
 		yield(get_tree().create_timer(0.3), "timeout")
 		z_index = base_z
@@ -132,8 +135,10 @@ func _on_Timer_timeout():
 		move_card(hand_location)
 		dealt = true
 	else:
-		 position = hand_location
+		position = hand_location
+
 	#Jiggle effect  Card dips down and then up. Stays slightly above so it's easy to identify new drawn cards.
 	move_card(Vector2(hand_location.x, hand_location.y + 40))
 	yield(get_tree().create_timer(0.3), "timeout")
 	move_card(Vector2(hand_location.x, hand_location.y - 60))
+	pass

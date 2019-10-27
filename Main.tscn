@@ -17,6 +17,7 @@ flag_disable_z = true
 spread = 180.0
 gravity = Vector3( 0, 0, 0 )
 initial_velocity = 500.0
+angular_velocity = 0.0
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
 scale = 6.6
@@ -46,13 +47,21 @@ deck_on_screen = true
 [node name="Table" parent="." instance=ExtResource( 4 )]
 
 [node name="LeftPoint" parent="Table" index="1"]
-position = Vector2( 533.019, 396.227 )
+position = Vector2( 166.596, 230.949 )
 
 [node name="RightPoint" parent="Table" index="2"]
-position = Vector2( 868.868, 396.123 )
+position = Vector2( 871.661, 213.857 )
 
 [node name="Deck" parent="Table" index="3"]
 position = Vector2( 82.9824, 217.659 )
+
+[node name="Path2D" parent="Table" index="4"]
+position = Vector2( -91.3478, -12.4698 )
+
+[node name="PathFollow2D" parent="Table/Path2D" index="0"]
+position = Vector2( 237.302, 437.394 )
+rotation = -1.02636
+loop = false
 
 [node name="PlayTarget" type="Area2D" parent="."]
 script = ExtResource( 5 )
@@ -141,6 +150,10 @@ margin_bottom = 84.0
 margin_top = 88.0
 margin_right = 182.0
 margin_bottom = 128.0
+
+[node name="icon" type="Sprite" parent="."]
+position = Vector2( 147.235, 423.822 )
+texture = ExtResource( 6 )
 [connection signal="deal_hand" from="." to="Table" method="draw_cards"]
 [connection signal="update_deck_count" from="Table" to="." method="_on_Table_update_deck_count"]
 [connection signal="update_discard_count" from="Table" to="." method="_on_Table_update_discard_count"]

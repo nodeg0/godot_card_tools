@@ -10,9 +10,7 @@ export (bool) var use_curve = true
 onready var deck_origin = get_node("../Deck")
 onready var deck_on = deck_origin.deck_on_screen
 onready var path_length = $Path2D.curve.get_baked_length()
-onready var spawner_follow = $Path2D/PathFollow2D
-onready var spawner_position = $Path2D/PathFollow2D/DeckSpawner.get_global_position()
-onready var spawner_rotation = $Path2D/PathFollow2D/DeckSpawner.get_global_transform().get_rotation()
+
 
 #Connect to UI as necessary
 signal update_deck_count 
@@ -36,7 +34,8 @@ func make_card(cardname):
 	card.connect("play_effect", self, "_play_effect")
 	main.add_child(card)
 	playerhandpaths.append(card.get_path())
-#
+
+#Used for setting up the hand. With arg "nocard" no card is removed. can be used to reset the hand positions
 func set_hand(card_played = "nocard"):
 
 	var cardcount = playerhandpaths.size()
@@ -45,8 +44,15 @@ func set_hand(card_played = "nocard"):
 	var ideal_cardwidth = 80 #Slightly less than the card width so as to have overlap. Could be increased if you want a gap
 	var hand_width = ideal_cardwidth * cardcount
 	var unused_space = space - hand_width
+	var handoffset = (path_length - hand_width) /2
+	var crowdedcards = path_length/cardcount
 	
 	if cardcount > 0:
+
+		$Path2D/PathFollow2D.offset = 0.0
+		if use_curve: 
+			if hand_width < path_length:
+				$Path2D/PathFollow2D.offset = handoffset
 
 		for card in playerhandpaths:
 			if card_played != null || card_played != "nocard":
@@ -58,43 +64,48 @@ func set_hand(card_played = "nocard"):
 					playerdiscard.append(playerhand[cardnum])
 					playerhand.remove(cardnum)
 					cardID.queue_free()
-			spawner_follow.offset = 0
-			for card in range(playerhandpaths.size()):
-				if !use_curve:
-					pass
-#					if hand_width > space:
-#						ideal_cardwidth = space / cardcount
-#						for card in range(playerhandpaths.size()):
-#							cardID = get_node(playerhandpaths[card])
-#							cardID.z_index = card + 1
-#							cardID.base_z = cardID.z_index
-#							cardID.position.x = $LeftPoint.position.x + card * ideal_cardwidth
-#							cardID.position.y = $LeftPoint.position.y
-#							cardID.hand_location = cardID.position	
-#							if deck_on and !cardID.dealt:
-#								cardID.deck_location = $Deck.position
-#								cardID.position = cardID.deck_location
-#					else:
-#						for card in range(playerhandpaths.size()):
-#							cardID = get_node(playerhandpaths[card])
-#							cardID.z_index = card + 1
-#							cardID.base_z = cardID.z_index
-#							cardID.position.x = (unused_space/2) + $LeftPoint.position.x + card * ideal_cardwidth
-#							cardID.position.y = $LeftPoint.position.y
-#							cardID.hand_location = cardID.position
-#							if deck_on and !cardID.dealt:
-#								cardID.deck_location = $Deck.position
-#								cardID.position = cardID.deck_location
-				else: 
 
-					cardID = get_node(playerhandpaths[card])
-					cardID.z_index = card + 1
-					cardID.base_z = cardID.z_index
-					cardID.position = spawner_position
-					cardID.rotation = spawner_rotation
-					cardID.hand_location = cardID.position
-					spawner_follow.offset += ideal_cardwidth
-					cardID.hand_location = cardID.position
+		for card in range(playerhandpaths.size()):
+			if !use_curve:
+				if hand_width > space:
+					ideal_cardwidth = space / cardcount
+					for card in range(playerhandpaths.size()):
+						cardID = get_node(playerhandpaths[card])
+						cardID.z_index = card + 1
+						cardID.base_z = cardID.z_index
+						cardID.position.x = $LeftPoint.position.x + card * ideal_cardwidth
+						cardID.position.y = $LeftPoint.position.y
+						cardID.hand_location = cardID.position	
+						if deck_on and !cardID.dealt:
+							cardID.deck_location = $Deck.position
+							cardID.position = cardID.deck_location
+				else:
+					for card in range(playerhandpaths.size()):
+						cardID = get_node(playerhandpaths[card])
+						cardID.z_index = card + 1
+						cardID.base_z = cardID.z_index
+						cardID.position.x = (unused_space/2) + $LeftPoint.position.x + card * ideal_cardwidth
+						cardID.position.y = $LeftPoint.position.y
+						cardID.hand_location = cardID.position
+						if deck_on and !cardID.dealt:
+							cardID.deck_location = $Deck.position
+							cardID.position = cardID.deck_location
+				pass
+				
+			else: 
+		
+				cardID = get_node(playerhandpaths[card])
+				cardID.z_index = card + 1
+				cardID.base_z = cardID.z_index
+				cardID.position = $Path2D/PathFollow2D/DeckSpawner.get_global_position()
+				cardID.rotation = $Path2D/PathFollow2D/DeckSpawner.get_global_transform().get_rotation()
+				cardID.hand_location = cardID.position
+				cardID.hand_rotation = cardID.rotation
+				
+				if hand_width >= path_length:
+					$Path2D/PathFollow2D.offset += crowdedcards
+				else:
+					$Path2D/PathFollow2D.offset += ideal_cardwidth
 
 	emit_signal("update_deck_count", playerdeck)
 	emit_signal("update_hand_count", playerhand)
