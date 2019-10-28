@@ -6,22 +6,22 @@ extends Node2D
 onready var table = $Table
 
 var playerdeck = []
-var enemydeck = []
+#var enemydeck = []
 
 signal deal_hand
 
 func _ready():
 	randomize()
 	get_player_deck()
-	deal_hand("player", 5)
+	deal_hand(2)
 
 func get_player_deck():
 	playerdeck = $Deck.default_deck()
 	playerdeck.shuffle()
 	table.make_player_deck(playerdeck)
 
-func deal_hand(player, numb):
-	emit_signal("deal_hand", numb, player)
+func deal_hand(num):
+	emit_signal("deal_hand", num)
 
 func _on_PlayTarget_area_entered(area):
 	area.set_play_area()
@@ -53,7 +53,7 @@ func _on_DeckButton_pressed():
 
 
 
-func _on_DeckOnScreen_toggled(button_pressed):
+func _on_DeckOnScreen_toggled():#button_pressed arg removed
 	if get_node("VBoxContainer/DeckOnScreen").pressed:
 		$Deck.deck_on_screen = true
 		$DeckButton.visible = true

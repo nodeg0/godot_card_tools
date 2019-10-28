@@ -18,11 +18,11 @@ func deckonscreen(val):
 		emit_signal("turn_off_deck")
 
 # to be used later to load and save decks
-func load_deck(owner):
-	pass
+#func load_deck(owner):
+#	pass
 
-func save_deck(owner):
-	pass
+#func save_deck(owner):
+#	pass
 
 # default deck.  can be used for the default starter deck. 
 func default_deck():

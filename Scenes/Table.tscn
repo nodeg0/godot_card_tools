@@ -5,7 +5,7 @@
 
 [sub_resource type="Curve2D" id=1]
 _data = {
-"points": PoolVector2Array( 0, 0, 0, 0, 237.302, 437.394, -219.02, -247.588, 219.02, 247.588, 601.883, 429.232 )
+"points": PoolVector2Array( 0, 0, 0, 0, 143.437, 445.557, -219.02, -247.588, 219.02, 247.588, 502.575, 369.376 )
 }
 
 [node name="Table" type="Node2D"]
@@ -17,7 +17,7 @@ script = ExtResource( 1 )
 position = Vector2( 63.6037, 430.287 )
 
 [node name="RightPoint" type="Position2D" parent="."]
-position = Vector2( 932.387, 423.485 )
+position = Vector2( 567.807, 435.728 )
 
 [node name="Deck" type="Position2D" parent="."]
 position = Vector2( 125.154, 157.803 )
@@ -27,9 +27,8 @@ position = Vector2( -59.8564, 51.6942 )
 curve = SubResource( 1 )
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Path2D"]
-position = Vector2( 366.738, 407.829 )
-rotation = -0.58516
-scale = Vector2( 1, 1 )
+position = Vector2( 143.437, 445.557 )
+rotation = -0.417051
 
 [node name="DeckSpawner" type="Position2D" parent="Path2D/PathFollow2D"]
 

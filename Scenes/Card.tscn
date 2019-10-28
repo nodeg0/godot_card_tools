@@ -11,7 +11,6 @@ extents = Vector2( 46, 69 )
 ]]
 position = Vector2( 1, 0 )
 script = ExtResource( 1 )
-focus_move_on_y = 80
 drag_and_drop = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

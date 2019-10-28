@@ -25,7 +25,8 @@ func make_all_card_array(path = "res://Resources/Cards/", rarity = 0):
 	if dir.open(path) == OK:
 		dir.list_dir_begin()
 		var file_name = dir.get_next()
-		var card = load(path + file_name)
+		var cardpath = path + file_name
+		var card = load(cardpath)
 		if rarity != 0:
 			while (file_name != ""):
 				if !dir.current_is_dir() and card.rarity == rarity: 

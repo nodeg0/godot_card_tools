@@ -3,7 +3,7 @@ extends Area2D
 signal in_focus
 signal play_effect
 
-export (int) var focus_move_on_y
+export (int) var focus_move_on_y = 80
 export (bool) var drag_and_drop #Used for drag and drop of cards.  If turned off interface is click to select.
 
 var card : Resource
@@ -18,7 +18,6 @@ var health : int
 var hand_location #modified on creation to store default location on Table node
 var hand_rotation
 var base_z
-var tilt : float 
 var dragMouse :  = false
 var focusCard :  = false
 var card_in_play : = false
@@ -34,7 +33,7 @@ func _ready():
 	pass
 
 
-func _process(delta): 
+func _process(_delta): 
 	#If drag and drop is being used, this is used to drage the card.
 	if drag_and_drop:
 		if(dragMouse):
@@ -71,7 +70,7 @@ func card_initialize(path, type):
 #Make card focus, which allows it to be clicked or dragged for an effect
 func make_focus():
 	var position_shift = position
-	position_shift.y -=80
+	position_shift.y -= focus_move_on_y
 	z_index += 10
 	emit_signal("in_focus", z_index)
 	focusCard = true
@@ -86,7 +85,8 @@ func make_focus():
 func off_focus(z):
 	if z != z_index && !card_in_play:
 		focusCard = false
-		rotation = hand_rotation
+		if hand_rotation != null:
+			rotation = hand_rotation
 		move_card(hand_location)
 		yield(get_tree().create_timer(0.3), "timeout")
 		z_index = base_z
@@ -110,7 +110,7 @@ func _unhandled_input(event):
 		pass
 
 # used to enable mouse drag and effects target play_effect if dropped on a valid target
-func _on_Card_input_event(viewport, event, shape_idx):
+func _on_Card_input_event(_viewport, event, shape_idx):
 	if event is InputEventMouseButton and drag_and_drop:
 		if event.is_action_pressed("left_click") and focusCard:
 			dragMouse = true

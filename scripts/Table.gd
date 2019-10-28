@@ -4,8 +4,10 @@ var playerdeck = [] #array full of NAMES of card files Note: does not contain pa
 var playerhand = [] #array full of NAMES of card files in hand Note: does not contain path
 var playerhandpaths = [] #array full of card paths for reference
 var playerdiscard = [] #array full of discarded cards
-export (int) var ideal_cardwidth = 80 #Slightly less than the card width so as to have overlap. Could be increased if you want a gap
-export (bool) var use_curve = true
+var temp_cardnode #REVISIT THIS.  
+var card_width #REVISIT THIS TOO.
+
+export (bool) var use_curve = true 
 
 onready var deck_origin = get_node("../Deck")
 onready var deck_on = deck_origin.deck_on_screen
@@ -34,78 +36,90 @@ func make_card(cardname):
 	card.connect("play_effect", self, "_play_effect")
 	main.add_child(card)
 	playerhandpaths.append(card.get_path())
+	temp_cardnode = card.find_node("Sprite")
+	card_width = temp_cardnode.texture.get_width() * temp_cardnode.scale.x
+	print(temp_cardnode.texture.get_width())
 
 #Used for setting up the hand. With arg "nocard" no card is removed. can be used to reset the hand positions
 func set_hand(card_played = "nocard"):
-
-	var cardcount = playerhandpaths.size()
-	var space = $RightPoint.position.x - $LeftPoint.position.x
-	var cardID
-	var ideal_cardwidth = 80 #Slightly less than the card width so as to have overlap. Could be increased if you want a gap
-	var hand_width = ideal_cardwidth * cardcount
-	var unused_space = space - hand_width
-	var handoffset = (path_length - hand_width) /2
-	var crowdedcards = path_length/cardcount
 	
-	if cardcount > 0:
+	if playerhandpaths.size() > 0:
 
-		$Path2D/PathFollow2D.offset = 0.0
-		if use_curve: 
-			if hand_width < path_length:
-				$Path2D/PathFollow2D.offset = handoffset
+		var space
+		var ideal_cardwidth = card_width * 0.8
+		print ("starting idealcardwidth: " + str(ideal_cardwidth))
+		var hand_width 
+		var hand_offset : float = 0.0
+		var cardindex = 0
 
 		for card in playerhandpaths:
+			var cardID 
+			var cardnum
 			if card_played != null || card_played != "nocard":
-				if card == card_played:
+				if card == card_played: 
 					cardID = get_node(card)
-					var cardnum = cardID.base_z -1
-
+					cardnum = cardID.base_z -1
 					playerhandpaths.remove(cardnum)
 					playerdiscard.append(playerhand[cardnum])
 					playerhand.remove(cardnum)
 					cardID.queue_free()
 
-		for card in range(playerhandpaths.size()):
+		hand_width = ideal_cardwidth * playerhandpaths.size()
+
+		if use_curve: 
+			space = path_length
+			$Path2D/PathFollow2D.offset = 0.0
+			if hand_width < path_length:
+				$Path2D/PathFollow2D.offset = (space - hand_width)/2
+			else:
+				ideal_cardwidth = path_length / playerhandpaths.size()
+		elif !use_curve:
+			space = $RightPoint.position.x - $LeftPoint.position.x
+			var unused_space = space - hand_width
+			if hand_width <= space:
+				hand_offset += (unused_space/2)
+			else:
+				ideal_cardwidth = space / playerhandpaths.size()
+
+		for card in playerhandpaths:
+			var cardID = get_node(card)
 			if !use_curve:
+				cardID.z_index = cardindex + 1
+				cardID.base_z = cardID.z_index
+
 				if hand_width > space:
-					ideal_cardwidth = space / cardcount
-					for card in range(playerhandpaths.size()):
-						cardID = get_node(playerhandpaths[card])
-						cardID.z_index = card + 1
-						cardID.base_z = cardID.z_index
-						cardID.position.x = $LeftPoint.position.x + card * ideal_cardwidth
-						cardID.position.y = $LeftPoint.position.y
-						cardID.hand_location = cardID.position	
-						if deck_on and !cardID.dealt:
-							cardID.deck_location = $Deck.position
-							cardID.position = cardID.deck_location
-				else:
-					for card in range(playerhandpaths.size()):
-						cardID = get_node(playerhandpaths[card])
-						cardID.z_index = card + 1
-						cardID.base_z = cardID.z_index
-						cardID.position.x = (unused_space/2) + $LeftPoint.position.x + card * ideal_cardwidth
-						cardID.position.y = $LeftPoint.position.y
-						cardID.hand_location = cardID.position
-						if deck_on and !cardID.dealt:
-							cardID.deck_location = $Deck.position
-							cardID.position = cardID.deck_location
-				pass
-				
-			else: 
-		
-				cardID = get_node(playerhandpaths[card])
-				cardID.z_index = card + 1
+					if cardindex == 0:
+						cardID.position.x = $LeftPoint.position.x
+					else:
+						cardID.position.x = $LeftPoint.position.x + hand_offset
+				elif hand_width <= space:
+					print("hand_width < space")
+					cardID.position.x = $LeftPoint.position.x + hand_offset
+					
+				print ("function idealcardwidth: " + str(ideal_cardwidth))
+				hand_offset += ideal_cardwidth
+				cardID.position.y = $LeftPoint.position.y
+				cardID.hand_location = cardID.position
+
+			elif use_curve: 
+
+				cardID = get_node(card)
+				cardID.z_index = cardindex + 1
 				cardID.base_z = cardID.z_index
 				cardID.position = $Path2D/PathFollow2D/DeckSpawner.get_global_position()
 				cardID.rotation = $Path2D/PathFollow2D/DeckSpawner.get_global_transform().get_rotation()
 				cardID.hand_location = cardID.position
 				cardID.hand_rotation = cardID.rotation
-				
-				if hand_width >= path_length:
-					$Path2D/PathFollow2D.offset += crowdedcards
-				else:
-					$Path2D/PathFollow2D.offset += ideal_cardwidth
+
+				$Path2D/PathFollow2D.offset += ideal_cardwidth
+
+			cardindex += 1
+
+			if deck_on and !cardID.dealt:
+				cardID.deck_location = $Deck.position
+				cardID.position = cardID.deck_location
+
+
 
 	emit_signal("update_deck_count", playerdeck)
 	emit_signal("update_hand_count", playerhand)
@@ -119,7 +133,7 @@ func shuffle_discard():
 			playerdeck.push_back(playerdiscard[card])
 	playerdiscard = []
 
-func draw_cards(num, player = "player"):
+func draw_cards(num): #player = "player" arg removed.  May be added again later if multi-deck/multi-player support is added
 	for x in num:
 		if playerdeck.size() > 0:
 			playerhand.append(playerdeck[0])
@@ -132,7 +146,7 @@ func draw_cards(num, player = "player"):
 			playerdeck.remove(0)
 		else:
 			print("out of cards")
-		set_hand("draw") #"draw" added so as not to trigger "nocard" result.
+	set_hand() #"draw" added so as not to trigger "nocard" result.
 
 func _new_card_focus(cardZ):
 	get_tree().call_group("cards", "off_focus", cardZ)
@@ -140,10 +154,14 @@ func _new_card_focus(cardZ):
 #Play effect needs to be implemented more fully for individual games. I recommend passing all the card values and the target when appropriate
 #It will be updated to be more universal in the future.
 func _play_effect(card_played):
-	print("play_effect")
-	print(card_played)
-	set_hand(card_played)
-	get_node("../PlayTarget").particles()
+	var card = get_node(card_played)
+	if card.card_in_play:
+		print("play_effect")
+		print(card_played)
+		set_hand(card_played)
+		get_node("../PlayTarget").particles()
+	else:
+		set_hand()
 
 func _on_Deck_turn_off_deck():
 	print("deck off")
