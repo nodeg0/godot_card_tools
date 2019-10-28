@@ -7,7 +7,8 @@ var playerdiscard = [] #array full of discarded cards
 var temp_cardnode #REVISIT THIS.  
 var card_width #REVISIT THIS TOO.
 
-export (bool) var use_curve = true 
+export (bool) var use_curve : = true 
+export var use_focus_area : = true
 
 onready var deck_origin = get_node("../Deck")
 onready var deck_on = deck_origin.deck_on_screen
@@ -34,13 +35,14 @@ func make_card(cardname):
 	card.card_initialize("res://Resources/Cards/", cardname)
 	card.connect("in_focus", self, "_new_card_focus")
 	card.connect("play_effect", self, "_play_effect")
+	card.connect("card_selected", self, "_card_selected")
 	main.add_child(card)
 	playerhandpaths.append(card.get_path())
 	temp_cardnode = card.find_node("Sprite")
 	card_width = temp_cardnode.texture.get_width() * temp_cardnode.scale.x
 	print(temp_cardnode.texture.get_width())
 
-#Used for setting up the hand. With arg "nocard" no card is removed. can be used to reset the hand positions
+#Used for setting up the hand. With arg "nocard" no card check for removal is done. can be used to reset the hand positions
 func set_hand(card_played = "nocard"):
 	
 	if playerhandpaths.size() > 0:
@@ -71,8 +73,11 @@ func set_hand(card_played = "nocard"):
 			$Path2D/PathFollow2D.offset = 0.0
 			if hand_width < path_length:
 				$Path2D/PathFollow2D.offset = (space - hand_width)/2
+				print("ideal cardwidth space: " + str(ideal_cardwidth))
 			else:
-				ideal_cardwidth = path_length / playerhandpaths.size()
+				ideal_cardwidth = space / playerhandpaths.size()
+				print("ideal cardwidth crowded: " + str(ideal_cardwidth))
+	
 		elif !use_curve:
 			space = $RightPoint.position.x - $LeftPoint.position.x
 			var unused_space = space - hand_width
@@ -110,7 +115,10 @@ func set_hand(card_played = "nocard"):
 				cardID.rotation = $Path2D/PathFollow2D/DeckSpawner.get_global_transform().get_rotation()
 				cardID.hand_location = cardID.position
 				cardID.hand_rotation = cardID.rotation
-
+				if deck_on and !cardID.dealt:
+					cardID.rotation = 0
+				if use_focus_area:
+					cardID.focus_area = $FocusCardArea.position
 				$Path2D/PathFollow2D.offset += ideal_cardwidth
 
 			cardindex += 1
@@ -147,6 +155,10 @@ func draw_cards(num): #player = "player" arg removed.  May be added again later 
 		else:
 			print("out of cards")
 	set_hand() #"draw" added so as not to trigger "nocard" result.
+
+func _card_selected(sel, card):
+	print("card selected")
+	get_tree().call_group("cards", "_lock_movement", card, sel)
 
 func _new_card_focus(cardZ):
 	get_tree().call_group("cards", "off_focus", cardZ)

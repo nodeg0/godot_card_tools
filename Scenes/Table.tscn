@@ -5,7 +5,7 @@
 
 [sub_resource type="Curve2D" id=1]
 _data = {
-"points": PoolVector2Array( 0, 0, 0, 0, 143.437, 445.557, -219.02, -247.588, 219.02, 247.588, 502.575, 369.376 )
+"points": PoolVector2Array( 0, 0, 0, 0, 143.437, 445.557, -219.02, -247.588, 219.02, 247.588, 478.089, 396.583 )
 }
 
 [node name="Table" type="Node2D"]
@@ -23,14 +23,17 @@ position = Vector2( 567.807, 435.728 )
 position = Vector2( 125.154, 157.803 )
 
 [node name="Path2D" type="Path2D" parent="."]
-position = Vector2( -59.8564, 51.6942 )
+position = Vector2( 71.8101, 68.962 )
 curve = SubResource( 1 )
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Path2D"]
 position = Vector2( 143.437, 445.557 )
-rotation = -0.417051
+rotation = -1.17643
 
 [node name="DeckSpawner" type="Position2D" parent="Path2D/PathFollow2D"]
 
 [node name="Sprite" type="Sprite" parent="Path2D/PathFollow2D/DeckSpawner"]
 texture = ExtResource( 2 )
+
+[node name="FocusCardArea" type="Position2D" parent="."]
+position = Vector2( 515.874, 315.137 )

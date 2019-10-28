@@ -17,6 +17,7 @@ flag_disable_z = true
 spread = 180.0
 gravity = Vector3( 0, 0, 0 )
 initial_velocity = 500.0
+angular_velocity = 0.0
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
 scale = 6.6
@@ -52,13 +53,16 @@ position = Vector2( 257.821, 482.632 )
 position = Vector2( 541.787, 485.088 )
 
 [node name="Deck" parent="Table" index="3"]
-position = Vector2( 101.716, 223.361 )
+position = Vector2( 59.3618, 142.725 )
 
 [node name="Path2D" parent="Table" index="4"]
-position = Vector2( -91.3478, -12.4698 )
+position = Vector2( 228.768, 119.857 )
 
 [node name="PathFollow2D" parent="Table/Path2D" index="0"]
 loop = false
+
+[node name="Sprite" parent="Table/Path2D/PathFollow2D/DeckSpawner" index="0"]
+visible = false
 
 [node name="PlayTarget" type="Area2D" parent="."]
 script = ExtResource( 5 )
@@ -119,11 +123,10 @@ custom_fonts/font = SubResource( 6 )
 text = "DRAW CARD"
 
 [node name="DeckButton" type="TextureButton" parent="."]
-visible = false
-margin_left = 85.0
-margin_top = 214.0
-margin_right = 114.0
-margin_bottom = 249.0
+margin_left = 57.3068
+margin_top = 139.066
+margin_right = 237.307
+margin_bottom = 409.066
 rect_scale = Vector2( 0.5, 0.5 )
 texture_normal = ExtResource( 8 )
 
