@@ -1,0 +1,14 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://Resources/Cardtypes.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+card_name = "Angry attack"
+rarity = 1
+cost = 3
+type = "Attack"
+power = 5
+defense = null
+flavour_text = "Why so angry? Ugh..."
+health = null

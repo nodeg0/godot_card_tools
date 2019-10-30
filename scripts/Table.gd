@@ -111,10 +111,13 @@ func set_hand(card_played = "nocard"):
 				cardID = get_node(card)
 				cardID.z_index = cardindex + 1
 				cardID.base_z = cardID.z_index
-				cardID.position = $Path2D/PathFollow2D/DeckSpawner.get_global_position()
-				cardID.rotation = $Path2D/PathFollow2D/DeckSpawner.get_global_transform().get_rotation()
-				cardID.hand_location = cardID.position
-				cardID.hand_rotation = cardID.rotation
+				cardID.hand_location = $Path2D/PathFollow2D/DeckSpawner.get_global_position()
+				cardID.hand_rotation = $Path2D/PathFollow2D/DeckSpawner.get_global_transform().get_rotation()
+				if cardID.dealt:
+					cardID.move_card(cardID.hand_location, cardID.hand_rotation)
+				else: 
+					cardID.position = cardID.position
+					cardID.rotation = cardID.rotation
 				if deck_on and !cardID.dealt:
 					cardID.rotation = 0
 				if use_focus_area:

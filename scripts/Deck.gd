@@ -7,6 +7,10 @@ signal turn_on_deck
 # used to determine if deck is being used.
 export var deck_on_screen : bool = false setget deckonscreen
 
+#saving/loading vars
+var save_path = "user://deck_save.cfg"
+var savefile = ConfigFile.new()
+
 func _ready():
 	pass
 
@@ -18,11 +22,15 @@ func deckonscreen(val):
 		emit_signal("turn_off_deck")
 
 # to be used later to load and save decks
-#func load_deck(owner):
-#	pass
+func save_deck(deck_save, key, value):
+	savefile.set_value(deck_save, key, value)
+	savefile.save(save_path)
 
-#func save_deck(owner):
-#	pass
+func load_deck(section, key, display_value):
+	savefile.getvalue(section, key, display_value)
+
+	
+	
 
 # default deck.  can be used for the default starter deck. 
 func default_deck():
