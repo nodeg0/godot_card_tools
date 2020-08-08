@@ -1,9 +1,9 @@
 extends Node
 
+var default_path = "res://Resources/Cards/"
 
 func _ready():
-	dir_contents("res://Resources/Cards/")
-	make_all_card_array("res://Resources/Cards/")
+	pass
 
 func dir_contents(path):
     var dir = Directory.new()
@@ -19,7 +19,7 @@ func dir_contents(path):
     else:
         print("An error occurred when trying to access the path.")
 		
-func make_all_card_array(path = "res://Resources/Cards/", rarity = 0):
+func make_all_card_array(path = default_path, rarity = 0):
 	var allcards = Array()
 	var dir = Directory.new()
 	if dir.open(path) == OK:
@@ -40,6 +40,9 @@ func make_all_card_array(path = "res://Resources/Cards/", rarity = 0):
 				file_name = dir.get_next()
 	else:
         print("An error occurred when trying to access the path.")
-	print(allcards)
-#	return allcards
+	return allcards
 
+func get_random_card(path = default_path, rarity = 0):
+	var cards = make_all_card_array(default_path, rarity)
+	cards.shuffle()
+	return cards[0]

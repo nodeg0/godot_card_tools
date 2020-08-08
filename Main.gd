@@ -53,10 +53,14 @@ func _on_DeckButton_pressed():
 
 
 
-func _on_DeckOnScreen_toggled():#button_pressed arg removed
+func _on_DeckOnScreen_toggled(button_pressed):#button_pressed arg removed
 	if get_node("VBoxContainer/DeckOnScreen").pressed:
 		$Deck.deck_on_screen = true
 		$DeckButton.visible = true
 	else:
 		$Deck.deck_on_screen = false
 		$DeckButton.visible = false
+
+func _on_AddCard_pressed():
+	playerdeck.append($Library.get_random_card())
+	_on_Table_update_deck_count(playerdeck)
